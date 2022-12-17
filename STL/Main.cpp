@@ -10,6 +10,7 @@ using std::endl;
 template <typename T> void print(const std::vector<T>& vec);
 
 //#define STL_ARRAY
+#define MY_EXCEPTION
 #define STL_VECTOR
 
 void main()
@@ -36,7 +37,48 @@ void main()
 	//print(vec);
 	vec.reserve(12);
 	print(vec);
-#endif // STL_VECTOR	
+#ifdef MY_EXCEPTION
+	try
+	{
+		for (int i = 0; i < vec.capacity(); i++)
+		{
+			//cout << vec[i] << tab;
+			cout << vec.at(i) << tab;
+		}
+		cout << endl;
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << endl;
+	}
+#endif // MY_EXCEPTION
+
+	for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
+	{
+		cout << *it << tab;
+	}
+	cout<< endl;
+
+	for(std::vector<int>::reverse_iterator it=vec.rbegin(); it != vec.rend(); ++it)
+	{
+		cout << *it << tab;
+	}
+	cout << endl;
+
+	int index, value, number;
+	do
+	{
+		cout << "Введите индекс добавляемого элемента "; cin >> index;
+		if (index > vec.size()) cout << "Error: out of range";
+	} while (index>=vec.size());
+	cout << "Введите количество добавляемых значений "; cin >> number;
+	cout << "Введите значение добавляемого элемента "; cin >> value;
+
+	vec.insert(vec.begin()+index,number, value);
+	print(vec);
+
+#endif // STL_VECTOR
+
 }
 template<typename T>void print(const std::vector<T>& vec)
 {
