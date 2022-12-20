@@ -60,9 +60,9 @@ void main()
 	{
 		cout << *it << tab;
 	}
-	cout<< endl;
+	cout << endl;
 
-	for(std::vector<int>::reverse_iterator it=vec.rbegin(); it != vec.rend(); ++it)
+	for (std::vector<int>::reverse_iterator it = vec.rbegin(); it != vec.rend(); ++it)
 	{
 		cout << *it << tab;
 	}
@@ -73,23 +73,28 @@ void main()
 	{
 		cout << "Введите индекс добавляемого элемента "; cin >> index;
 		if (index > vec.size()) cout << "Error: out of range";
-	} while (index>=vec.size());
+	} while (index >= vec.size());
 	cout << "Введите количество добавляемых значений "; cin >> number;
 	cout << "Введите значение добавляемого элемента "; cin >> value;
 
-	vec.insert(vec.begin()+index,number, value);
+	vec.insert(vec.begin() + index, number, value);
 	print(vec);
 
 #endif // STL_VECTOR
 
 #ifdef STL_LIST
-	std::list<int> list = {0, 1, 1, 2, 3, 5, 8, 13, 21 };
+	std::list<int> list = { 0, 1, 1, 2, 3, 5, 8, 13, 21 };
 	print(list);
 	int index, value;
 	cout << "Введите добавляемое значение: "; cin >> value;
-	cout << "Введите индекс добавляемого значения: "; cin >> index;
-	std::list<int>::const_iterator it=list.begin();
-	for (int i = 0; i < index-1; i++) it++;
+	do
+	{
+		cout << "Введите индекс добавляемого значения: "; cin >> index;
+		if (index > list.size())cout << "Error: out of range";
+	} while (index > list.size());
+
+	std::list<int>::const_iterator it = list.begin();
+	for (int i = 0; i < index; i++) it++;
 	list.insert(it, value);
 	print(list);
 #endif // STL_LIST
@@ -109,7 +114,7 @@ template<typename T>void print(const std::vector<T>& vec)
 }
 void print(const std::list<int>& list)
 {
-	for (std::list<int>::const_iterator it = list.begin();it!=list.end();++it)
+	for (std::list<int>::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
 		cout << *it << tab;
 	}
