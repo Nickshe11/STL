@@ -1,6 +1,7 @@
 ﻿#include<iostream>
 #include<array>
 #include<vector>
+#include<list>
 //using namespace std;
 using std::cin;
 using std::cout;
@@ -8,10 +9,12 @@ using std::endl;
 #define tab "\t"
 
 template <typename T> void print(const std::vector<T>& vec);
+void print(const std::list<int>& list);
 
 //#define STL_ARRAY
-#define MY_EXCEPTION
-#define STL_VECTOR
+//#define MY_EXCEPTION
+//#define STL_VECTOR
+#define STL_LIST
 
 void main()
 {
@@ -79,6 +82,19 @@ void main()
 
 #endif // STL_VECTOR
 
+#ifdef STL_LIST
+	std::list<int> list = {0, 1, 1, 2, 3, 5, 8, 13, 21 };
+	print(list);
+	int index, value;
+	cout << "Введите добавляемое значение: "; cin >> value;
+	cout << "Введите индекс добавляемого значения: "; cin >> index;
+	std::list<int>::const_iterator it=list.begin();
+	for (int i = 0; i < index-1; i++) it++;
+	list.insert(it, value);
+	print(list);
+#endif // STL_LIST
+
+
 }
 template<typename T>void print(const std::vector<T>& vec)
 {
@@ -90,4 +106,14 @@ template<typename T>void print(const std::vector<T>& vec)
 	cout << "Size: " << vec.size() << endl;
 	cout << "Max size: " << vec.max_size() << endl;
 	cout << "Capacity: " << vec.capacity() << endl;
+}
+void print(const std::list<int>& list)
+{
+	for (std::list<int>::const_iterator it = list.begin();it!=list.end();++it)
+	{
+		cout << *it << tab;
+	}
+	cout << endl;
+	cout << "Size: " << list.size() << endl;
+	cout << "Max size: " << list.max_size() << endl;
 }
