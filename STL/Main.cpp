@@ -2,6 +2,7 @@
 #include<array>
 #include<vector>
 #include<list>
+#include<algorithm>
 //using namespace std;
 using std::cin;
 using std::cout;
@@ -80,6 +81,19 @@ void main()
 	vec.insert(vec.begin() + index, number, value);
 	print(vec);
 
+	do
+	{
+		cout << "Введите индекс удаляемого элемента: "; cin >> index;
+		if (index >= vec.size())cout << "Out or range" << endl;
+	} while (index>=vec.size());
+	
+	cout << "Введите количество удаляемых значений: "; cin >> number;
+
+	vec.erase(vec.begin() + index, vec.begin() + index+number);
+
+	for (int i : vec)cout << i << tab;
+	cout<< endl;
+
 #endif // STL_VECTOR
 
 #ifdef STL_LIST
@@ -93,9 +107,10 @@ void main()
 		if (index > list.size())cout << "Error: out of range";
 	} while (index > list.size());
 
-	std::list<int>::const_iterator it = list.begin();
-	for (int i = 0; i < index; i++) it++;
-	list.insert(it, value);
+	std::list<int>::const_iterator position = list.begin();
+	//for (int i = 0; i < index; i++) ++position;
+	std::advance(position, index); //функция для автоматического сдвига итератора в листе (для #include <algorithm>)
+	list.insert(position, value);
 	print(list);
 #endif // STL_LIST
 
