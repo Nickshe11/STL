@@ -30,6 +30,8 @@ public:
 		id(violation), place(place) {};
 	~Crime() {};
 	friend std::ostream& operator <<(std::ostream& os, const Crime& obj);
+	friend void print(std::map<std::string, std::list<Crime>>& base);
+	friend void save(std::map<std::string, std::list<Crime>>& base);
 };
 std::ostream& operator <<(std::ostream& os, const Crime& obj)
 {
@@ -44,8 +46,12 @@ void main()
 	{
 		{"a777bb",{Crime(0, "Улица Ленина"), Crime(6, "Улица Космонавтов"), Crime(3, "Улица Октябрьская")}},
 		{"m123ab", {Crime(2, "площадь Революции")}},
-		{"a234bb", {Crime (5, "улица Ленина"), Crime (4, "улица Ленина")}}
+		{"a234bb", {Crime(5, "улица Ленина"), Crime(4, "улица Ленина")}}
 	};
+	print(base);
+}
+void print(std::map<std::string, std::list<Crime>>& base)
+{
 	for (std::map<std::string, std::list<Crime>>::iterator it = base.begin(); it != base.end(); ++it)
 	{
 		cout << it->first << ":\n";
@@ -55,4 +61,8 @@ void main()
 		}
 		cout << delimiter << endl;
 	}
+}
+void save(std::map<std::string, std::list<Crime>>& base)
+{
+
 }
