@@ -114,13 +114,13 @@ void load(std::map<std::string, std::list<Crime>> base)
 			std::getline(fin, car_number);
 			car_number.pop_back();
 
-			while (crime!=delimiter)
-			{
+			//while (crime!=delimiter)
+			//{
 				std::getline(fin, crime,',');
 				std::getline(fin, place);
-				if (crime == delimiter) break;
-				else
-				{
+				//if (crime == delimiter) break;
+				//else
+				//{
 					for (std::map <int, std::string>::iterator it = violation.begin(); it != violation.end(); it++)
 					{
 						if (crime == it->second)
@@ -131,8 +131,8 @@ void load(std::map<std::string, std::list<Crime>> base)
 							break;
 						}
 					}
-				}
-			}
+				//}
+			//}
 
 
 			//Crime crime(violation, place);
