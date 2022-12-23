@@ -31,14 +31,13 @@ class Crime
 public:
 	Crime(int violation, const std::string& place) :
 		id(violation), place(place) {};
-	Crime(const std::string& violation, const const std::string& place)
+	/*Crime(const std::string& violation, const const std::string& place)
 	{
-
-	}
+		
+	};*/
 	~Crime() {};
 	friend std::ostream& operator <<(std::ostream& os, const Crime& obj);
-	friend void print(std::map<std::string, std::list<Crime>>& base);
-	friend void save(std::map<std::string, std::list<Crime>>& base);
+	friend std::ofstream& operator<<(std::ofstream& ofs, const Crime& obj);
 	friend void load(std::map<std::string, std::list<Crime>> base);
 };
 std::ostream& operator <<(std::ostream& os, const Crime& obj)
@@ -46,8 +45,17 @@ std::ostream& operator <<(std::ostream& os, const Crime& obj)
 	return os << violation.at(obj.id) << ", " << obj.place;
 }
 
-//#define MAP_FROM_PC
-#define MAP_FROM_FILE
+std::ofstream& operator<<(std::ofstream& ofs, const Crime& obj)
+{
+	ofs << obj.id << " " << obj.place;
+	return ofs;
+}
+void print(const std::map< std::string, std::list<Crime>>& base);
+void save(const std::map<std::string, std::list<Crime>>& base, const std::string& filename);
+void load(std::map<std::string, std::list<Crime>>& base, const std::string& filename);
+
+#define MAP_FROM_PC
+//#define MAP_FROM_FILE
 
 void main()
 {
@@ -60,86 +68,82 @@ void main()
 		{"a234bb", {Crime(5, "улица Ленина"), Crime(4, "улица Ленина")}}
 	};
 	print(base);
-	//save(base);
+	save(base, "base.txt");
+	system("notepad.base.txt")
+		//system.notepad
 #endif // MAP_FROM_PC
 
 #ifdef MAP_FROM_FILE
-	std::map<std::string, std::list<Crime>> base{};
-	load(base);
+		std::map<std::string, std::list<Crime>> base{};
+	//load(base);
 
 #endif // MAP_FROM_FILE
 
 }
-void print(std::map<std::string, std::list<Crime>>& base)
+
+void print(const std::map<std::string, std::list<Crime>>& base)
 {
-	for (std::map<std::string, std::list<Crime>>::iterator it = base.begin(); it != base.end(); ++it)
+	for (std::map<std::string, std::list<Crime>>::const_iterator it = base.begin(); it != base.end(); ++it)
 	{
 		cout << it->first << ":\n";
-		for (std::list<Crime>::iterator jt = it->second.begin(); jt != it->second.end(); jt++)
+		for (std::list<Crime>::const_iterator jt = it->second.begin(); jt != it->second.end(); jt++)
 		{
 			cout << *jt << endl;
 		}
 		cout << delimiter << endl;
 	}
 }
-void save(std::map<std::string, std::list<Crime>> base)
+void save(const std::map<std::string, std::list<Crime>> base, const std::string& filename)
 {
-	std::ofstream fout;
-	fout.open("Crime.txt", std::ios::app);
-	for (std::map<std::string, std::list<Crime>>::iterator it = base.begin(); it != base.end(); ++it)
+	std::ofstream fout(filename.c_str());
+	//fout.open("Crime.txt", std::ios::app);
+	for (std::map<std::string, std::list<Crime>>::const_iterator it = base.begin(); it != base.end(); ++it)
 	{
 		fout << it->first << ":\n";
-		for (std::list<Crime>::iterator jt = it->second.begin(); jt != it->second.end(); jt++)
+		for (std::list<Crime>::const_iterator jt = it->second.begin(); jt != it->second.end(); ++jt)
 		{
 			fout << *jt << endl;
 		}
-		fout << delimiter << endl;
+		fout << endl;
 	}
 	fout.close();
 }
-
-void load(std::map<std::string, std::list<Crime>> base)
+void load(std::map<std::string, std::list<Crime>>& base, const std::string& filename)
 {
-	std::ifstream fin("Crime.txt");
+	std::ifstream fin(filename.c_str());
 	if (fin.is_open())
 	{
 		while (!fin.eof())
 		{
-			std::string car_number{};
-			std::string crime{};
-			std::string place{};
-			int id;
-
-			std::list <Crime> list;
-			std::getline(fin, car_number);
-			car_number.pop_back();
-
-			//while (crime!=delimiter)
-			//{
-				std::getline(fin, crime,',');
-				std::getline(fin, place);
-				//if (crime == delimiter) break;
-				//else
-				//{
-					for (std::map <int, std::string>::iterator it = violation.begin(); it != violation.end(); it++)
-					{
-						if (crime == it->second)
-						{
-							id = it->first;
-							Crime car(id, place);
-							list.push_back(car);
-							break;
-						}
-					}
-				//}
-			//}
-
-
-			//Crime crime(violation, place);
-			//Crime crime ((std::getline(fin, violation, ',')), (std::getline(fin, place, ' ')))
-
-
+			std::string license_plate;
+			std::getline(fin, license_plate, ':');
+			if (license_plate.empty())continue;
+			std::string all_crimes;
+			std::getline(fin, all_crimes);
+			all_crimes.erase(0, 1);
+			size_t start = 0;
+			size_t end = 0;
+			for (
+				start = 0, end = all_crimes.find(','); 
+				end != std::string::npos; 
+				start = end+1, end = all_crimes.find(',', end+1)
+				)
+			{
+				std::string place = all_crimes.substr(start, end - start);
+				int id = std::stoi(place);
+				place[0] = ' ';//удаляем цифру в начале строки
+				place.erase(0, place.find_first_not_of(' '));
+				Crime crime(id, place);
+				base[license_plate].push_back(crime);
+			}
 
 		}
+		fin.close();
+	}
+	else
+	{
+		std::cerr << "Error: file not found" << endl;
 	}
 }
+
+
