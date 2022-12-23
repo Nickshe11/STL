@@ -1,4 +1,6 @@
-﻿#include<iostream>
+﻿#define _CRT_SECURE_NO_WARNINGS
+
+#include<iostream>
 #include<fstream>
 #include<map>
 #include<list>
@@ -11,9 +13,9 @@ using std::endl;
 #define tab "\t"
 #define delimiter "\n----------------------------\n"
 
-void load(std::ifstream& fin);
 
-std::map<int, std::string> violation =
+
+const std::map<int, std::string> violation =
 {
 	{0, "Проезд на красный"},
 	{1, "Превышение скорости"},
@@ -31,14 +33,9 @@ class Crime
 public:
 	Crime(int violation, const std::string& place) :
 		id(violation), place(place) {};
-	/*Crime(const std::string& violation, const const std::string& place)
-	{
-		
-	};*/
 	~Crime() {};
 	friend std::ostream& operator <<(std::ostream& os, const Crime& obj);
 	friend std::ofstream& operator<<(std::ofstream& ofs, const Crime& obj);
-	friend void load(std::map<std::string, std::list<Crime>> base);
 };
 std::ostream& operator <<(std::ostream& os, const Crime& obj)
 {
@@ -55,7 +52,8 @@ void save(const std::map<std::string, std::list<Crime>>& base, const std::string
 void load(std::map<std::string, std::list<Crime>>& base, const std::string& filename);
 
 #define MAP_FROM_PC
-//#define MAP_FROM_FILE
+#define STD_STRING_PARSE
+
 
 void main()
 {
@@ -69,16 +67,9 @@ void main()
 	};
 	print(base);
 	save(base, "base.txt");
-	system("notepad.base.txt")
-		//system.notepad
+	system("notepad base.txt");
+
 #endif // MAP_FROM_PC
-
-#ifdef MAP_FROM_FILE
-		std::map<std::string, std::list<Crime>> base{};
-	//load(base);
-
-#endif // MAP_FROM_FILE
-
 }
 
 void print(const std::map<std::string, std::list<Crime>>& base)
@@ -93,7 +84,7 @@ void print(const std::map<std::string, std::list<Crime>>& base)
 		cout << delimiter << endl;
 	}
 }
-void save(const std::map<std::string, std::list<Crime>> base, const std::string& filename)
+void save(const std::map<std::string, std::list<Crime>>& base, const std::string& filename)
 {
 	std::ofstream fout(filename.c_str());
 	//fout.open("Crime.txt", std::ios::app);
@@ -108,6 +99,7 @@ void save(const std::map<std::string, std::list<Crime>> base, const std::string&
 	}
 	fout.close();
 }
+
 void load(std::map<std::string, std::list<Crime>>& base, const std::string& filename)
 {
 	std::ifstream fin(filename.c_str());
@@ -121,22 +113,44 @@ void load(std::map<std::string, std::list<Crime>>& base, const std::string& file
 			std::string all_crimes;
 			std::getline(fin, all_crimes);
 			all_crimes.erase(0, 1);
-			size_t start = 0;
-			size_t end = 0;
+#ifdef STD_STRING_PARSE
+			/*size_t start = 0;
+			size_t end = 0;*/
 			for (
-				start = 0, end = all_crimes.find(','); 
-				end != std::string::npos; 
-				start = end+1, end = all_crimes.find(',', end+1)
+				int start = 0, end = all_crimes.find(',');
+				/*end != std::string::npos*/;
+				start = end + 1, end = all_crimes.find(',', end + 1)
 				)
 			{
 				std::string place = all_crimes.substr(start, end - start);
+				if (place[place.size() - 1] == ';')place[place.size() - 1] = 0;
 				int id = std::stoi(place);
 				place[0] = ' ';//удаляем цифру в начале строки
 				place.erase(0, place.find_first_not_of(' '));
-				Crime crime(id, place);
+				//Crime crime(id, place);
+				base[license_plate].push_back(Crime(id, place));
+				if (end == std::string::npos)break;
+			}
+#endif // STD_STRING_PARSE
+#ifndef STD_STRING_PARSE
+			int size = all_crimes.size() + 1;
+			char* szbuffer = new char[size] {};
+			strcpy_s(szbuffer, size, all_crimes.c_str());
+
+			char delimiters[] = ",;";
+			for (char* pch = strtok(szbuffer, delimiters); pch; pch = strtok(NULL, delimiters))
+			{
+				int id = std::atoi(pch);
+				pch[0] = ' ';
+				while (pch[0] == ' ')
+				{
+					for (int i = 0; pch[i]; i++)pch[i] = pch[i + 1];
+				}
+				Crime crime(id, pch);
 				base[license_plate].push_back(crime);
 			}
-
+			delete[]szbuffer;
+#endif // !STD_STRING_PARSE				
 		}
 		fin.close();
 	}
@@ -144,6 +158,8 @@ void load(std::map<std::string, std::list<Crime>>& base, const std::string& file
 	{
 		std::cerr << "Error: file not found" << endl;
 	}
+
+
 }
 
 
